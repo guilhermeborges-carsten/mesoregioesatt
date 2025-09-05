@@ -1,0 +1,22 @@
+{
+    "name": "dashboard-logistico/php",
+    "description": "Dashboard Logístico - Sistema de Análise de Embarques entre Mesorregiões em PHP",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "vlucas/phpdotenv": "^5.5",
+        "monolog/monolog": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DashboardLogistico\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
