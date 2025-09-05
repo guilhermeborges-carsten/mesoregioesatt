@@ -16,7 +16,7 @@ class ExcelProcessor
 
     public function __construct()
     {
-        $this->config = \DashboardLogistico\Config\Config::getInstance();
+        $this->config = \App\Config\Config::getInstance();
     }
 
     /**

@@ -34,10 +34,10 @@ class Config
             ],
             'upload' => [
                 'max_file_size' => 16 * 1024 * 1024, // 16MB
-                'allowed_extensions' => ['xlsx', 'xls'],
+                'allowed_extensions' => ['xlsx', 'xls', 'csv'],
                 'upload_path' => 'uploads/',
                 'temp_path' => 'temp/',
-                'template_path' => 'templates/template_embarques.xlsx'
+                'template_path' => 'templates/template_embarques.csv'
             ],
             'database' => [
                 'host' => 'localhost',

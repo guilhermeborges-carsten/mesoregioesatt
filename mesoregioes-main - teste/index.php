@@ -9,8 +9,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 date_default_timezone_set('America/Sao_Paulo');
 
-// Incluir autoloader
-require_once 'vendor/autoload.php';
+// Incluir classes principais diretamente (sem Composer)
+require_once 'src/Config/Config.php';
+require_once 'src/Core/Router.php';
+require_once 'src/Core/Controller.php';
+require_once 'src/Core/Model.php';
+require_once 'src/Core/View.php';
+require_once 'src/Controllers/DashboardController.php';
+require_once 'src/Controllers/ApiController.php';
+require_once 'src/Models/EmbarquesModel.php';
+require_once 'src/Utils/DataProcessor.php';
+require_once 'src/Utils/ExcelProcessor.php';
+require_once 'src/Utils/SimpleExcelProcessor.php';
+require_once 'src/Utils/ExportHelper.php';
 
 // Inicializar configurações
 $config = new App\Config\Config();

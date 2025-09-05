@@ -28,7 +28,7 @@ class Model
         try {
             $this->data = $this->excelProcessor->readExcel($filePath);
             return true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
     }

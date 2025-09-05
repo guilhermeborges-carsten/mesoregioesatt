@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\Model;
 use App\Utils\DataProcessor;
 use App\Utils\ExcelProcessor;
+use App\Utils\SimpleExcelProcessor;
 use App\Utils\ExportHelper;
 
 /**
@@ -21,7 +22,14 @@ class EmbarquesModel extends Model
     {
         parent::__construct();
         $this->dataProcessor = new DataProcessor();
-        $this->excelProcessor = new ExcelProcessor();
+        
+        // Verificar se PhpSpreadsheet está disponível
+        if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
+            $this->excelProcessor = new ExcelProcessor();
+        } else {
+            $this->excelProcessor = new SimpleExcelProcessor();
+        }
+        
         $this->exportHelper = new ExportHelper();
     }
 
@@ -37,7 +45,7 @@ class EmbarquesModel extends Model
                 'message' => 'Arquivo processado com sucesso',
                 'records' => count($this->data)
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'success' => false,
                 'message' => 'Erro ao processar arquivo: ' . $e->getMessage(),

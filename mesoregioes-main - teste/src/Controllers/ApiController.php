@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\EmbarquesModel;
 use App\Utils\ExcelProcessor;
+use App\Utils\SimpleExcelProcessor;
 use App\Utils\ExportHelper;
 
 /**
@@ -20,7 +21,14 @@ class ApiController extends Controller
     {
         parent::__construct();
         $this->embarquesModel = new EmbarquesModel();
-        $this->excelProcessor = new ExcelProcessor();
+        
+        // Verificar se PhpSpreadsheet está disponível
+        if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
+            $this->excelProcessor = new ExcelProcessor();
+        } else {
+            $this->excelProcessor = new SimpleExcelProcessor();
+        }
+        
         $this->exportHelper = new ExportHelper();
     }
 
@@ -44,11 +52,11 @@ class ApiController extends Controller
         }
 
         // Validar tipo de arquivo
-        $allowedExtensions = ['xlsx', 'xls'];
+        $allowedExtensions = ['xlsx', 'xls', 'csv'];
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         
         if (!in_array($fileExtension, $allowedExtensions)) {
-            $this->jsonError('Formato de arquivo não suportado. Use .xlsx ou .xls');
+            $this->jsonError('Formato de arquivo não suportado. Use .xlsx, .xls ou .csv');
         }
 
         // Validar tamanho do arquivo
@@ -339,15 +347,15 @@ class ApiController extends Controller
      */
     public function downloadTemplate()
     {
-        $templatePath = $this->config->get('upload.template_path', 'templates/template_embarques.xlsx');
+        $templatePath = $this->config->get('upload.template_path', 'templates/template_embarques.csv');
         
         if (!file_exists($templatePath)) {
             $this->jsonError('Template não encontrado');
         }
 
-        $filename = 'template_embarques.xlsx';
+        $filename = 'template_embarques.csv';
         
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . filesize($templatePath));
         header('Cache-Control: no-cache, must-revalidate');

@@ -74,9 +74,9 @@ class Router
     {
         if (is_string($handler)) {
             // Formato: Controller@method
-            list($controllerName, $method) = explode('@', $handler);
+            [$controllerName, $method] = explode('@', $handler);
             
-            $controllerClass = "DashboardLogistico\\Controllers\\{$controllerName}";
+            $controllerClass = "App\\Controllers\\{$controllerName}";
             
             if (!class_exists($controllerClass)) {
                 $this->handleNotFound();
