@@ -1,6 +1,6 @@
 <?php
 
-namespace DashboardLogistico\Core;
+namespace App\Core;
 
 /**
  * Sistema de views simples

@@ -1,8 +1,8 @@
 <?php
 
-namespace DashboardLogistico\Utils;
+namespace App\Utils;
 
-use DashboardLogistico\Config\Config;
+use App\Config\Config;
 
 /**
  * Processador de dados - substitui funcionalidades do pandas

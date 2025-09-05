@@ -1,22 +1,25 @@
 <?php
 
-namespace DashboardLogistico\Controllers;
+namespace App\Controllers;
 
-use DashboardLogistico\Core\Controller;
-use DashboardLogistico\Utils\ExcelProcessor;
-use DashboardLogistico\Utils\ExportHelper;
+use App\Core\Controller;
+use App\Models\EmbarquesModel;
+use App\Utils\ExcelProcessor;
+use App\Utils\ExportHelper;
 
 /**
  * Controlador das APIs
  */
 class ApiController extends Controller
 {
+    private $embarquesModel;
     private $excelProcessor;
     private $exportHelper;
 
     public function __construct()
     {
         parent::__construct();
+        $this->embarquesModel = new EmbarquesModel();
         $this->excelProcessor = new ExcelProcessor();
         $this->exportHelper = new ExportHelper();
     }
@@ -55,20 +58,19 @@ class ApiController extends Controller
         }
 
         try {
-            // Processar arquivo
-            list($data, $error) = $this->excelProcessor->processExcelFile($file['tmp_name']);
+            // Processar arquivo usando o Model
+            $result = $this->embarquesModel->processExcelFile($file['tmp_name']);
             
-            if ($error) {
-                $this->jsonError($error);
+            if (!$result['success']) {
+                $this->jsonError($result['message']);
             }
-
-            // Salvar dados no processador
-            $this->dataProcessor->setData($data);
 
             // Remover arquivo temporário
             unlink($file['tmp_name']);
 
-            $this->jsonSuccess(null, 'Arquivo processado com sucesso');
+            $this->jsonSuccess([
+                'records' => $result['records']
+            ], $result['message']);
 
         } catch (\Exception $e) {
             $this->jsonError('Erro ao processar arquivo: ' . $e->getMessage());
@@ -80,12 +82,12 @@ class ApiController extends Controller
      */
     public function stats()
     {
-        if (!$this->dataProcessor->hasData()) {
+        if (!$this->embarquesModel->hasData()) {
             $this->jsonError('Nenhum dado carregado');
         }
 
         $filters = $this->getParams();
-        $stats = $this->dataProcessor->getStats($filters);
+        $stats = $this->embarquesModel->getStats($filters);
         
         $this->json($stats);
     }
@@ -95,10 +97,12 @@ class ApiController extends Controller
      */
     public function evolucaoMensal()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getEvolucaoMensal($filters);
+        $data = $this->embarquesModel->getEvolucaoMensal($filters);
         
         $this->json($data);
     }
@@ -108,10 +112,12 @@ class ApiController extends Controller
      */
     public function evolucaoMensalClientes()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getEvolucaoMensalClientes($filters);
+        $data = $this->embarquesModel->getEvolucaoMensalClientes($filters);
         
         $this->json($data);
     }
@@ -121,10 +127,12 @@ class ApiController extends Controller
      */
     public function insightsClientes()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getInsightsClientes($filters);
+        $data = $this->embarquesModel->getInsightsClientes($filters);
         
         $this->json($data);
     }
@@ -134,10 +142,12 @@ class ApiController extends Controller
      */
     public function topOrigens()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getTopOrigens($filters);
+        $data = $this->embarquesModel->getTopOrigens($filters);
         
         $this->json($data);
     }
@@ -147,10 +157,12 @@ class ApiController extends Controller
      */
     public function topDestinos()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getTopDestinos($filters);
+        $data = $this->embarquesModel->getTopDestinos($filters);
         
         $this->json($data);
     }
@@ -160,10 +172,12 @@ class ApiController extends Controller
      */
     public function heatmapData()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getHeatmapData($filters);
+        $data = $this->embarquesModel->getHeatmapData($filters);
         
         $this->json($data);
     }
@@ -173,10 +187,12 @@ class ApiController extends Controller
      */
     public function fluxosMapa()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getFluxosMapa($filters);
+        $data = $this->embarquesModel->getFluxosMapa($filters);
         
         $this->json($data);
     }
@@ -186,10 +202,12 @@ class ApiController extends Controller
      */
     public function tabelaDados()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getTabelaDados($filters);
+        $data = $this->embarquesModel->getTabelaDados($filters);
         
         $this->json($data);
     }
@@ -199,10 +217,12 @@ class ApiController extends Controller
      */
     public function balancoEmbarques()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getBalancoEmbarques($filters);
+        $data = $this->embarquesModel->getBalancoEmbarques($filters);
         
         $this->json($data);
     }
@@ -212,10 +232,12 @@ class ApiController extends Controller
      */
     public function balancoClientes()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getBalancoClientes($filters);
+        $data = $this->embarquesModel->getBalancoClientes($filters);
         
         $this->json($data);
     }
@@ -225,9 +247,11 @@ class ApiController extends Controller
      */
     public function clientes()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
-        $data = $this->dataProcessor->getClientes();
+        $data = $this->embarquesModel->getClientes();
         
         $this->json($data);
     }
@@ -237,9 +261,7 @@ class ApiController extends Controller
      */
     public function mesorregioes()
     {
-        $this->validateDataLoaded();
-        
-        $data = $this->dataProcessor->getMesorregioes();
+        $data = $this->embarquesModel->getMesorregioes();
         
         $this->json($data);
     }
@@ -249,17 +271,16 @@ class ApiController extends Controller
      */
     public function exportarExcel()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->applyFilters($filters);
+        $result = $this->embarquesModel->exportarExcel($filters);
         
-        if (empty($data)) {
-            $this->jsonError('Nenhum dado encontrado com os filtros aplicados');
+        if (!$result) {
+            $this->jsonError('Erro ao exportar dados');
         }
-
-        $filename = 'embarques_' . date('Ymd_His') . '.xlsx';
-        $this->excelProcessor->exportToExcel($data, $filename);
     }
 
     /**
@@ -267,17 +288,16 @@ class ApiController extends Controller
      */
     public function exportarCsv()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->applyFilters($filters);
+        $result = $this->embarquesModel->exportarCsv($filters);
         
-        if (empty($data)) {
-            $this->jsonError('Nenhum dado encontrado com os filtros aplicados');
+        if (!$result) {
+            $this->jsonError('Erro ao exportar dados');
         }
-
-        $filename = 'embarques_' . date('Ymd_His') . '.csv';
-        $this->excelProcessor->exportToCsv($data, $filename);
     }
 
     /**
@@ -285,17 +305,16 @@ class ApiController extends Controller
      */
     public function exportarBalancoExcel()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getBalancoEmbarques($filters);
+        $result = $this->embarquesModel->exportarBalancoExcel($filters);
         
-        if (isset($data['error'])) {
-            $this->jsonError($data['error']);
+        if (!$result) {
+            $this->jsonError('Erro ao exportar balanço');
         }
-
-        $filename = 'balanco_embarques_' . date('Ymd_His') . '.xlsx';
-        $this->exportHelper->exportBalancoExcel($data, $filename);
     }
 
     /**
@@ -303,17 +322,16 @@ class ApiController extends Controller
      */
     public function exportarBalancoClientesExcel()
     {
-        $this->validateDataLoaded();
+        if (!$this->embarquesModel->hasData()) {
+            $this->jsonError('Nenhum dado carregado');
+        }
         
         $filters = $this->getParams();
-        $data = $this->dataProcessor->getBalancoClientes($filters);
+        $result = $this->embarquesModel->exportarBalancoClientesExcel($filters);
         
-        if (isset($data['error'])) {
-            $this->jsonError($data['error']);
+        if (!$result) {
+            $this->jsonError('Erro ao exportar balanço de clientes');
         }
-
-        $filename = 'balanco_clientes_' . date('Ymd_His') . '.xlsx';
-        $this->exportHelper->exportBalancoClientesExcel($data, $filename);
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace DashboardLogistico\Controllers;
+namespace App\Controllers;
 
-use DashboardLogistico\Core\Controller;
+use App\Core\Controller;
 
 /**
  * Controlador principal do dashboard

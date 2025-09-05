@@ -1,6 +1,6 @@
 <?php
 
-namespace DashboardLogistico\Utils;
+namespace App\Utils;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

@@ -1,10 +1,10 @@
 <?php
 
-namespace DashboardLogistico\Core;
+namespace App\Core;
 
-use DashboardLogistico\Config\Config;
-use DashboardLogistico\Core\View;
-use DashboardLogistico\Utils\DataProcessor;
+use App\Config\Config;
+use App\Core\View;
+use App\Utils\DataProcessor;
 
 /**
  * Classe base para controladores

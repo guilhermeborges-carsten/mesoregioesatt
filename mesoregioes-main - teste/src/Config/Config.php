@@ -1,6 +1,6 @@
 <?php
 
-namespace DashboardLogistico\Config;
+namespace App\Config;
 
 /**
  * Classe de configuração do sistema
