@@ -14,16 +14,16 @@ use App\Utils\ExportHelper;
  */
 class EmbarquesModel extends Model
 {
-    private $dataProcessor;
-    private $excelProcessor;
     private $exportHelper;
 
     public function __construct()
     {
         parent::__construct();
+        
+        // Sobrescrever o dataProcessor da classe pai
         $this->dataProcessor = new DataProcessor();
         
-        // Verificar se PhpSpreadsheet está disponível
+        // Verificar se PhpSpreadsheet está disponível e sobrescrever o excelProcessor
         if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
             $this->excelProcessor = new ExcelProcessor();
         } else {
